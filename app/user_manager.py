@@ -1,6 +1,7 @@
 import json
 import os
 import re
+from urllib.parse import unquote
 import uuid
 import glob
 import shutil
@@ -138,7 +139,10 @@ class UserManager():
             file = request.match_info.get(param, None)
             if not file:
                 return web.Response(status=400)
-                
+            
+            # We should decodeURLcomponent here, because the file param is encoded by encodeURIComponent 
+            # in frontend `async getUserData(...)`
+            file = unquote(file)
             path = self.get_request_user_filepath(request, file)
             if not path:
                 return web.Response(status=403)
